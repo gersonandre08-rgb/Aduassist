@@ -1,8 +1,14 @@
 import streamlit as st
 import pandas as pd
-import google.generativeai as genai
+from google import genai
 from datetime import datetime, timedelta
 import io
+
+try:
+    client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+    ID_MODELO = 'gemini-2.5-flash'
+except Exception as e:
+    st.error("Error: No se encontró la API Key en Streamlit Secrets o el SDK no está instalado.")
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="Customs Auditor Pro | Perú", layout="wide", page_icon="🏢")
