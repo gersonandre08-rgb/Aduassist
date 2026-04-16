@@ -156,7 +156,7 @@ elif menu == "📝 Nuevo Despacho & IA":
                         """
                         # USANDO SINTAXIS google-genai
                         response = client.models.generate_content(
-                            model="gemini-2.0-flash", 
+                            model="gemini-2.5-flash", 
                             contents=prompt_analisis
                         )
                         respuesta_ia = response.text
@@ -251,7 +251,7 @@ elif menu == "⚖️ War Room (Consulta Legal)":
                 full_prompt = f"Analiza como experto legal aduanero: {tema_legal}. Consulta: {prompt_chat}."
                 # USANDO SINTAXIS google-genai
                 response = client.models.generate_content(
-                    model="gemini-2.0-flash", 
+                    model="gemini-2.5-flash", 
                     contents=full_prompt
                 )
                 st.markdown(response.text)
