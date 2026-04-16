@@ -154,7 +154,11 @@ elif menu == "📝 Nuevo Despacho & IA":
                         4. Cita posibles infracciones de la Tabla de Sanciones si hay errores en la declaración de este tipo de producto.
                         5. Menciona Tratados (TLC) aplicables si viene de China, EE.UU. o UE.
                         """
-                        response = model.generate_content(prompt_analisis)
+                        # USANDO SINTAXIS google-genai
+                        response = client.models.generate_content(
+                            model="gemini-2.0-flash", 
+                            contents=prompt_analisis
+                        )
                         respuesta_ia = response.text
                         
                         nuevo_registro = {
@@ -208,7 +212,6 @@ elif menu == "🧮 Liquidación & Valoración":
         
         total_gastos = total_tributos_aduana + monto_percepcion + gastos_log
         
-        # Resultados visuales
         st.metric("TOTAL CIF", f"USD {cif:,.2f}")
         st.write(f"**Ad-Valorem ({adv_tasa}%):** USD {monto_adv:,.2f}")
         st.write(f"**IGV (16%) + IPM (2%):** USD {monto_igv + monto_ipm:,.2f}")
@@ -227,7 +230,7 @@ elif menu == "🧮 Liquidación & Valoración":
 
 elif menu == "⚖️ War Room (Consulta Legal)":
     st.header("Consultoría Técnica y Debate Crítico")
-    st.markdown("""En este apartado puedes debatir con la IA sobre la **Ley General de Aduanas**, **Reglamento**, **Tabla de Sanciones** e **Incoterms**.""")
+    st.markdown("""En este apartado puedes debatir con la IA sobre la **Ley General de Aduanas**.""")
 
     tema_legal = st.selectbox("Marco Normativo Base:", ["Ley General de Aduanas (DL 1053)", "Reglamento de la LGA", "Tabla de Sanciones (D.S. 418-2019-EF)", "Procedimiento DESPA-PG.01", "Incoterms 2020", "Valoración (OMC)"])
 
@@ -238,15 +241,19 @@ elif menu == "⚖️ War Room (Consulta Legal)":
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    if prompt_chat := st.chat_input("Ej: ¿Procede la rectificación de la DAM sin sanción si el canal es naranja?"):
+    if prompt_chat := st.chat_input("Ej: ¿Procede la rectificación de la DAM sin sanción?"):
         st.session_state.messages.append({"role": "user", "content": prompt_chat})
         with st.chat_message("user"):
             st.markdown(prompt_chat)
 
         with st.chat_message("assistant"):
             try:
-                full_prompt = f"Analiza como un experto legal aduanero peruano el tema: {tema_legal}. Consulta: {prompt_chat}. Responde citando artículos."
-                response = model.generate_content(full_prompt)
+                full_prompt = f"Analiza como experto legal aduanero: {tema_legal}. Consulta: {prompt_chat}."
+                # USANDO SINTAXIS google-genai
+                response = client.models.generate_content(
+                    model="gemini-2.0-flash", 
+                    contents=full_prompt
+                )
                 st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
             except Exception as e:
